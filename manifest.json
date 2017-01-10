@@ -1,0 +1,24 @@
+{
+  "content_scripts": [ {
+     "css": [ "style.css" ],
+     "js": ["jquery-3.1.1.min.js", "filesaver.js", "ext.js" ],
+     "matches": [ "*://*.pakartot.lt/*", "*://pakartot.lt/*" ],
+     "run_at": "document_start"
+  } ],
+  "manifest_version": 2,
+
+  "name": "Pakartot.lt",
+  "description": "Šis pletinys leidžia atsisiųsti dainą iš Pakartot.lt",
+  "version": "1.1",
+  "icons": {
+     "128": "logo128.png"
+  },
+  "browser_action": {
+    "default_icon": "icon.png"
+  },
+  "permissions": [
+    "https://ajax.googleapis.com/",
+    "https://www.pakartot.lt/",
+    "http://www.pakartot.lt/"
+  ]
+}
