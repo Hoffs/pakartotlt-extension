@@ -3,11 +3,29 @@
   width: 65px !important;
 }
 
+.nr {
+  width: 20px !important;
+}
+
+.tr_end {
+  line-height: 20px !important;
+  width: 50px !important;
+  height: 40px !important;
+  margin-top: 5px !important;
+  margin-left: 5px !important;
+}
+
+.share-track {
+  margin-left: 16px !important;
+}
+
 .play_button {
+  margin-left: 0 !important;
   display: inline-table !important;
 }
 
 .stop_button {
+  margin-left: 0 !important;
   display: inline-table !important;
 }
 
