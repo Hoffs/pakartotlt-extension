@@ -1,7 +1,7 @@
 {
   "content_scripts": [ {
      "css": [ "jquery.toast.css", "style.css" ],
-     "js": ["jquery-3.1.1.min.js", "query.toast.js", "filesaver.js", "ext.js" ],
+     "js": ["jquery-3.1.1.min.js", "jsmediatags.min.js", "query.toast.js", "filesaver.js", "ext.js" ],
      "matches": [ "*://*.pakartot.lt/*", "*://pakartot.lt/*" ],
      "run_at": "document_start"
   } ],
@@ -10,7 +10,7 @@
   "name": "Pakartot.lt siuntėjas",
   "short_name": "PKS",
   "description": "Šis pletinys leidžia atsisiųsti dainas iš Pakartot.lt",
-  "version": "1.5",
+  "version": "1.6",
   "icons": {
     "16": "logo16.png",
     "48": "logo48.png",
