@@ -3,29 +3,59 @@ $(document).ready(function () {
   updatePage();
 });
 
+const getTags = async (json) => {
+  let artists = [];
+  $('div.greytitle > a').each((index, el) => { artists.push($(el).html()) });
+  const image = await fetch($('.item-cover > img').attr('src'));
+  const imageArrBuff = await image.arrayBuffer();
+  return { 
+    TIT2: json['info']['title'],
+    TPE1: artists,
+    TLEN: (json['info']['length'].split(':')[0] * 60) + (json['info']['length'].split(':')[1]) * 1000,
+    TYER: $('div.left_column_c').children().last().text().trim(),
+    TALB: $('div.main-title').children().first().text().trim(),
+    WCOP: 'Lietuvos gretutinių teisių asociacija AGATA',
+    WOAS: window.location.href,
+    TRCK: $(`a[data-id=${uid}]`).parent().prev().html(),
+    APIC: {
+      type: 3,
+      data: imageArrBuff,
+      description: 'album cover',
+    },
+  }
+}
+
 //Functions for funciontality (thats sounds good)
 function getSongInfo(uid) {
   $.post("https://www.pakartot.lt/api/backend/frontend/player/play.php", { type: "tid", id: uid })
-    .done(function (data) {
+    .done((data) => {
       json = JSON.parse(data);
-      var fileUrl = json['info']['filename'];
-      var songName = json['info']['artist'].substr(1, json['info']['artist'].length) + " - " + json['info']['title'] + ".mp3";
-      downloadStartNotification(songName);
-      console.log(songName);
-      downloadSong(fileUrl, songName);
-    });
+      let fileUrl = json['info']['filename'];
+      let songName = json['info']['artist'].substr(1, json['info']['artist'].length) + " - " + json['info']['title'] + ".mp3";
+      getTags(json)
+        .then((tags) => {
+          downloadStartNotification(songName);
+          downloadSong(fileUrl, songName, tags);
+        })
+    })
 }
 
-function downloadSong(url, name) {
+async function downloadSong(url, name, tags) {
   totalDownloads = totalDownloads + 1;
   updateDownloadToast();
   fetch(url)
-    .then(function (response) {
-      console.log(name);
-      return response.blob();
+    .then((response) => {
+      return response.arrayBuffer(); 
     })
-    .then(function (myBlob) {
-      console.log(name);
+    .then((buffer) => {
+      const writer = new ID3Writer(buffer);
+      Object.keys(tags).forEach((tag) => {
+        writer.setFrame(tag, tags[tag]);
+      });
+      writer.addTag();
+      return writer.getBlob();
+    })
+    .then((myBlob) => {
       saveAs(myBlob, name);
       currentDownloaded = currentDownloaded + 1;
       updateDownloadToast();
