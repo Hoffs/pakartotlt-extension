@@ -6,7 +6,10 @@ $(document).ready(function () {
 const getTags = async (json) => {
   let artists = [];
   $('div.greytitle > a').each((index, el) => { artists.push($(el).html()) });
-  const image = await fetch($('.item-cover > img').attr('src'));
+  const url = ($('.item-cover > img').attr('src') !== undefined) 
+    ? $('.item-cover > img').attr('src') 
+    : "https://www.pakartot.lt/app/templates/default4/assets/images/frontend/default/default-big.png"; 
+  const image = await fetch(url);
   const imageArrBuff = await image.arrayBuffer();
   return { 
     TIT2: json['info']['title'],
