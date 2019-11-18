@@ -1,44 +1,29 @@
 .play {
   display: inline-flex !important;
-  width: 65px !important;
-}
-
-.nr {
-  width: 20px !important;
-}
-
-.tr_end {
-  line-height: 20px !important;
-  width: 50px !important;
-  height: 40px !important;
-  margin-top: 5px !important;
-  margin-left: 5px !important;
-}
-
-.share-track {
-  margin-left: 16px !important;
-}
-
-.play_button {
-  margin-left: 0 !important;
-  display: inline-table !important;
-}
-
-.stop_button {
-  margin-left: 0 !important;
-  display: inline-table !important;
+  width: 96px !important;
 }
 
 .d_button {
-  color: #878787;
-  border-radius: 14px;
+  color: #414960;
+  border-radius: 24px;
   background-color: transparent;
   border-style: solid;
   border-width: 1px;
-  border-color: #878787;
-  width: 30px;
-  height: 30px;
-  margin: 10px 0 0 5px;
+  border-color: #414960;
+  width: 40px;
+  height: 40px;
+  margin: 0px 0 0 4px;
+  transition: 0.3s;
+}
+
+.d_button:hover {
+  border-color: #696eff;
+  color: #fff;
+  background-color: #696eff;
+}
+
+.jq-toast-wrap {
+  z-index: 10001 !important;
 }
 
 /* Loading spinner */

@@ -3,23 +3,25 @@ $(document).ready(function () {
   updatePage();
 });
 
+const toastBg = "#13131f";
+
 const getTags = async (json) => {
   let artists = [];
-  $('div.greytitle > a').each((index, el) => { artists.push($(el).html()) });
-  const url = ($('.item-cover > img').attr('src') !== undefined) 
-    ? $('.item-cover > img').attr('src') 
-    : "https://www.pakartot.lt/app/templates/default4/assets/images/frontend/default/default-big.png"; 
+  $('div.m-greytitle > a').each((index, el) => { artists.push($(el).html()) });
+  const url = ($('.m-item-cover > img').attr('src') !== undefined) 
+    ? $('.m-item-cover > img').attr('src') 
+    : "https://www.pakartot.lt/app/templates/default4/assets/images/frontend/default/default-big.png";
   const image = await fetch(url);
   const imageArrBuff = await image.arrayBuffer();
   return { 
     TIT2: json['info']['title'],
     TPE1: artists,
     TLEN: (json['info']['length'].split(':')[0] * 60) + (json['info']['length'].split(':')[1]) * 1000,
-    TYER: $('div.left_column_c').children().last().text().trim(),
-    TALB: $('div.main-title').children().first().text().trim(),
+    // TYER: $('div.left_column_c').children().last().text().trim(),
+    TALB: $('div.m-album-title').text().trim(),
     WCOP: 'Lietuvos gretutinių teisių asociacija AGATA',
     WOAS: window.location.href,
-    TRCK: $(`a[data-id=${uid}]`).parent().prev().html(),
+    TRCK: $(`a[data-id=${uid}]`).parent().parent().index() + 1,
     APIC: {
       type: 3,
       data: imageArrBuff,
@@ -33,6 +35,7 @@ function getSongInfo(uid) {
   $.post("https://www.pakartot.lt/api/backend/frontend/player/play.php", { type: "tid", id: uid })
     .done((data) => {
       json = JSON.parse(data);
+      console.log(json)
       let fileUrl = json['info']['filename'];
       let songName = json['info']['artist'].substr(1, json['info']['artist'].length) + " - " + json['info']['title'] + ".mp3";
       getTags(json)
@@ -70,7 +73,7 @@ function downloadStartNotification(song) {
   $.toast({
     text: "Pradeta siųsti daina " + song + ".",
     showHideTransition: "slide",
-    bgColor: "#2f2e2e",
+    bgColor: toastBg,
     loader: false,
     textColor: "white",
     hideAfter: 3000,
@@ -84,6 +87,7 @@ function downloadStartNotification(song) {
 var totalDownloads = 0;
 var currentDownloaded = 0;
 var downloadToast = undefined;
+var toastPos = { left: 20, bottom: 80 }
 
 function updateDownloadToast() {
   if (typeof downloadToast == 'undefined') {
@@ -91,11 +95,11 @@ function updateDownloadToast() {
       text: "<div class='loading' style='display: inline-flex;'></div><p style='font-size: 15px; padding-top: 5px;'>Atsiųstos " + currentDownloaded + "/" + totalDownloads + " dainos.</p>",
       showHideTransition: "slide",
       loader: false,
-      bgColor: "#2f2e2e",
+      bgColor: toastBg,
       textColor: "white",
       hideAfter: "false",
       textAlign: "center",
-      position: "bottom-left"
+      position: toastPos
     });
   } else if (totalDownloads != currentDownloaded) {
     downloadToast.update({
