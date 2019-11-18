@@ -19,5 +19,5 @@
    "permissions": [ "https://ajax.googleapis.com/", "https://www.pakartot.lt/", "http://www.pakartot.lt/" ],
    "short_name": "PKS",
    "update_url": "https://clients2.google.com/service/update2/crx",
-   "version": "1.10"
+   "version": "1.11"
 }

@@ -3,14 +3,21 @@ $(document).ready(function () {
   updatePage();
 });
 
+const defaultAlbumIcon = "https://www.pakartot.lt/app/templates/default8/assets//images/default/album_90.jpg";
 const toastBg = "#13131f";
 
 const getTags = async (json) => {
   let artists = [];
   $('div.m-greytitle > a').each((index, el) => { artists.push($(el).html()) });
-  const url = ($('.m-item-cover > img').attr('src') !== undefined) 
+  let url = ($('.m-item-cover > img').attr('src') !== undefined) 
     ? $('.m-item-cover > img').attr('src') 
-    : "https://www.pakartot.lt/app/templates/default4/assets/images/frontend/default/default-big.png";
+    : defaultAlbumIcon;
+
+  // SVG's dont work well with ID3/tags
+  if (url.endsWith('svg')) {
+    url = defaultAlbumIcon;
+  }
+
   const image = await fetch(url);
   const imageArrBuff = await image.arrayBuffer();
   return { 
