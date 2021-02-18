@@ -7,11 +7,9 @@ const defaultAlbumIcon = "https://www.pakartot.lt/app/templates/default8/assets/
 const toastBg = "#13131f";
 
 const getTags = async (json) => {
-  let artists = [];
+  const artists = [];
   $('div.m-greytitle > a').each((index, el) => { artists.push($(el).html()) });
-  let url = ($('.m-item-cover > img').attr('src') !== undefined) 
-    ? $('.m-item-cover > img').attr('src') 
-    : defaultAlbumIcon;
+  const url = json['info']['photo_path'] || defaultAlbumIcon;
 
   // SVG's dont work well with ID3/tags
   if (url.endsWith('svg')) {
@@ -20,7 +18,7 @@ const getTags = async (json) => {
 
   const image = await fetch(url);
   const imageArrBuff = await image.arrayBuffer();
-  return { 
+  return {
     TIT2: json['info']['title'],
     TPE1: artists,
     TLEN: (json['info']['length'].split(':')[0] * 60) + (json['info']['length'].split(':')[1]) * 1000,
@@ -43,24 +41,30 @@ function getSongInfo(uid) {
     .done((data) => {
       json = JSON.parse(data);
       console.log(json)
-      let fileUrl = json['info']['filename'];
-      let songName = json['info']['artist'].substr(1, json['info']['artist'].length) + " - " + json['info']['title'] + ".mp3";
-      getTags(json)
-        .then((tags) => {
-          downloadStartNotification(songName);
-          downloadSong(fileUrl, songName, tags);
-        })
+      const fileUrl = json['info']['filename'];
+      const songName = json['info']['artist'].substr(1, json['info']['artist'].length) + " - " + json['info']['title'] + ".mp3";
+      downloadStartNotification(songName);
+      downloadSong(fileUrl, songName, json);
     })
 }
 
-async function downloadSong(url, name, tags) {
+function downloadSong(url, name, json) {
   totalDownloads = totalDownloads + 1;
   updateDownloadToast();
-  fetch(url)
+  chrome.runtime.sendMessage({ songId: url.split("?file=")[1], extraData: { name, json } }, {}, handleSongDownload);
+}
+
+async function handleSongDownload(response) {
+  const { blobUrl, json, name } = response;
+  const tags = await getTags(json);
+
+  fetch(blobUrl)
     .then((response) => {
-      return response.arrayBuffer(); 
+      return response.arrayBuffer();
     })
     .then((buffer) => {
+      URL.revokeObjectURL(blobUrl); // After getting buffer, revoke stored blob.
+
       const writer = new ID3Writer(buffer);
       Object.keys(tags).forEach((tag) => {
         writer.setFrame(tag, tags[tag]);
@@ -126,22 +130,25 @@ function updateDownloadToast() {
 // Listening for URL changes to update page.
 function updatePage() {
   $(".play").each(function (data) {
-    if ($(this).find("button.d_button").length == 0) {
+    if ($(this).find("button").length == 0) {
       trackid = $(this).children("a").data("id");
       if (trackid) {
-        var button = $('<button data-id="' + trackid + '" type="button" title="Atsisiųsti" class="d_button"><i class="fa fa-download" style="font-size: 1.6em; margin-left: -0.5px;" aria-hidden="true"></i></button>');
+        const title = $("#playernode").length == 0 ? "Neprisijungta" : "Atsisiųsti";
+        const disabled = $("#playernode").length == 0 ? "disabled" : "";
+        const button = $('<button data-id="' + trackid + '" type="button" title="'+title+'" '+disabled+'><i class="fa fa-download" style="font-size: 1.6em; margin-left: -0.5px;" aria-hidden="true"></i></button>');
         $(this).append(button);
+
+        button.unbind('click', clickHandler);
+        button.bind('click', clickHandler);
       }
     }
   });
 
   //Make sure that only one event fires after the click.
-  $(".d_button").unbind('click', clickHandler);
-  $(".d_button").bind('click', clickHandler);
 }
 
 // Handler for clicks
-var clickHandler = function () {
+const clickHandler = function () {
   uid = $(this).data("id");
   getSongInfo(uid);
 }

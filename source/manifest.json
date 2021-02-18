@@ -8,7 +8,11 @@
       "matches": [ "*://*.pakartot.lt/*", "*://pakartot.lt/*" ],
       "run_at": "document_start"
    } ],
-   "description": "Šis pletinys leidžia atsisiųsti dainas iš Pakartot.lt",
+   "background": {
+      "scripts": ["background.js"],
+      "persistent": true
+   },
+   "description": "Šis plėtinys leidžia atsisiųsti dainas iš Pakartot.lt",
    "icons": {
       "128": "logo128.png",
       "16": "logo16.png",
@@ -16,8 +20,8 @@
    },
    "manifest_version": 2,
    "name": "Pakartot.lt siuntėjas",
-   "permissions": [ "https://ajax.googleapis.com/", "https://www.pakartot.lt/", "http://www.pakartot.lt/" ],
+   "permissions": [ "https://ajax.googleapis.com/", "https://www.pakartot.lt/", "http://www.pakartot.lt/", "https://stream1.pakartot.lt/", "webRequest", "webRequestBlocking" ],
    "short_name": "PKS",
    "update_url": "https://clients2.google.com/service/update2/crx",
-   "version": "1.11"
+   "version": "1.12"
 }

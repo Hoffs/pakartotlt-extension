@@ -3,7 +3,7 @@
   width: 96px !important;
 }
 
-.d_button {
+.play button {
   color: #414960;
   border-radius: 24px;
   background-color: transparent;
@@ -16,7 +16,7 @@
   transition: 0.3s;
 }
 
-.d_button:hover {
+.play button:not([disabled]):hover {
   border-color: #696eff;
   color: #fff;
   background-color: #696eff;
